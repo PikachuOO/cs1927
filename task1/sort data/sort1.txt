@@ -1,0 +1,253 @@
+//peterKydd
+//task1
+// SORT1
+
+
+//RANDOM
+/*
+ ./randomStrings a b
+where:
+a = number of characters
+b = number of strings
+*/ 
+
+
+//1000 
+
+ptky490@bugle08:~$ ./randomStrings 100 1000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 1000 item(s) with sort1
+real 0.02
+user 0.02
+sys 0.00
+ptky490@bugle08:~$ ./randomStrings 100 1000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 1000 item(s) with sort1
+real 0.01
+user 0.01
+sys 0.00
+ptky490@bugle08:~$ ./randomStrings 100 1000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 1000 item(s) with sort1
+real 0.02
+user 0.02
+sys 0.00
+ptky490@bugle08:~$ 
+
+
+//10,000
+
+ptky490@bugle08:~$ ./randomStrings 100 10000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 10000 item(s) with sort1
+real 0.10
+user 0.08
+sys 0.00
+ptky490@bugle08:~$ ./randomStrings 100 10000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 10000 item(s) with sort1
+real 0.10
+user 0.08
+sys 0.00
+ptky490@bugle08:~$ ./randomStrings 100 10000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 10000 item(s) with sort1
+real 0.10
+user 0.09
+sys 0.00
+ptky490@bugle08:~$ 
+
+
+//100,000
+
+ptky490@bugle08:~$ ./randomStrings 100 100000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 100000 item(s) with sort1
+real 1.18
+user 1.04
+sys 0.00
+ptky490@bugle08:~$ ./randomStrings 100 100000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 100000 item(s) with sort1
+real 1.17
+user 1.03
+sys 0.00
+ptky490@bugle08:~$ ./randomStrings 100 100000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 100000 item(s) with sort1
+real 1.18
+user 1.03
+sys 0.01
+ptky490@bugle08:~$ 
+
+
+//200,000
+
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 200000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 200000 item(s) with sort1
+real 2.89
+user 2.57
+sys 0.03
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 200000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 200000 item(s) with sort1
+real 2.88
+user 2.59
+sys 0.01
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 200000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 200000 item(s) with sort1
+real 2.91
+user 2.60
+sys 0.02
+ptky490@pipe08:~/cs1927/task1$ 
+
+
+//300,000
+
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 300000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 300000 item(s) with sort1
+real 5.15
+user 4.69
+sys 0.02
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 300000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 300000 item(s) with sort1
+real 5.16
+user 4.70
+sys 0.02
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 300000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 300000 item(s) with sort1
+real 10.18
+user 4.70
+sys 0.02
+
+
+
+//400,000
+
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 400000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 400000 item(s) with sort1
+real 7.94
+user 7.34
+sys 0.02
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 400000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 400000 item(s) with sort1
+real 7.93
+user 7.34
+sys 0.01
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 400000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 400000 item(s) with sort1
+real 7.96
+user 7.38
+sys 0.02
+ptky490@pipe08:~/cs1927/task1$ 
+
+
+//500,000
+
+
+Sorting 500000 item(s) with sort1
+real 11.32
+user 10.59
+sys 0.01
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 500000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 500000 item(s) with sort1
+real 11.31
+user 10.55
+sys 0.04
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 500000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 500000 item(s) with sort1
+real 11.28
+user 10.54
+sys 0.02
+
+
+//600,000
+
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 600000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 600000 item(s) with sort1
+real 15.22
+user 14.34
+sys 0.02
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 600000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 600000 item(s) with sort1
+real 15.22
+user 14.34
+sys 0.02
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 600000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 600000 item(s) with sort1
+real 15.29
+user 14.40
+sys 0.02
+
+
+//700,000
+
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 700000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 700000 item(s) with sort1
+real 19.67
+user 18.61
+sys 0.04
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 700000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 700000 item(s) with sort1
+real 19.67
+user 18.60
+sys 0.04
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 700000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 700000 item(s) with sort1
+^CCommand terminated by signal 2
+real 2.18
+user 1.20
+sys 0.02
+
+
+//800,000
+
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 800000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 800000 item(s) with sort1
+real 24.62
+user 23.44
+sys 0.03
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 800000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 800000 item(s) with sort1
+real 24.69
+user 23.46
+sys 0.03
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 800000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 800000 item(s) with sort1
+real 24.64
+user 23.43
+sys 0.05
+
+
+//900,000
+
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 900000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 900000 item(s) with sort1
+real 30.10
+user 28.74
+sys 0.05
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 900000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 900000 item(s) with sort1
+real 30.06
+user 28.73
+sys 0.02
+ptky490@pipe08:~/cs1927/task1$ ./randomStrings 100 900000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 900000 item(s) with sort1
+real 30.19
+user 28.80
+sys 0.06
+
+
+//1,000,000
+
+ptky490@bugle08:~$ ./randomStrings 100 1000000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 1000000 item(s) with sort1
+real 36.18
+user 34.64
+sys 0.08
+ptky490@bugle08:~$ ./randomStrings 100 1000000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 1000000 item(s) with sort1
+real 36.19
+user 34.69
+sys 0.04
+ptky490@bugle08:~$ ./randomStrings 100 1000000 | time -p ~cs1927/bin/task1/sort1 -qn
+Sorting 1000000 item(s) with sort1
+real 36.12
+user 34.63
+sys 0.04
+ptky490@bugle08:~$ 
+
+//1,100,000
+
+//1,200,000
+

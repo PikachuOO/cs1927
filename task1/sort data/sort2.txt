@@ -1,0 +1,75 @@
+//peterKydd
+//task1
+// SORT2
+
+
+//RANDOM
+/*
+ ./randomStrings a b
+where:
+a = number of characters
+b = number of strings
+*/ 
+:
+
+//1000
+
+ptky490@bugle08:~$ ./randomStrings 100 1000 | time -p ~cs1927/bin/task1/sort2 -qn
+Sorting 1000 item(s) with sort2
+real 0.03
+user 0.02
+sys 0.00
+ptky490@bugle08:~$ ./randomStrings 100 1000 | time -p ~cs1927/bin/task1/sort2 -qn
+Sorting 1000 item(s) with sort2
+real 0.03
+user 0.03
+sys 0.00
+ptky490@bugle08:~$ ./randomStrings 100 1000 | time -p ~cs1927/bin/task1/sort2 -qn
+Sorting 1000 item(s) with sort2
+real 0.02
+user 0.02
+sys 0.00
+ptky490@bugle08:~$ 
+
+
+//10,000
+ptky490@bugle08:~$ ./randomStrings 100 10000 | time -p ~cs1927/bin/task1/sort2 -qn
+Sorting 10000 item(s) with sort2
+real 1.25
+user 1.24
+sys 0.00
+ptky490@bugle08:~$ ./randomStrings 100 10000 | time -p ~cs1927/bin/task1/sort2 -qn
+Sorting 10000 item(s) with sort2
+real 1.25
+user 1.23
+sys 0.00
+ptky490@bugle08:~$ ./randomStrings 100 10000 | time -p ~cs1927/bin/task1/sort2 -qn
+Sorting 10000 item(s) with sort2
+real 1.26
+user 1.24
+sys 0.00
+ptky490@bugle08:~$ 
+
+
+//100,000
+
+ptky490@bugle08:~$ ./randomStrings 100 100000 | time -p ~cs1927/bin/task1/sort2 -qn
+Sorting 100000 item(s) with sort2
+real 166.74
+user 166.19
+sys 0.01
+ptky490@bugle08:~$ ./randomStrings 100 100000 | time -p ~cs1927/bin/task1/sort2 -qn
+Sorting 100000 item(s) with sort2
+real 163.30
+user 162.75
+sys 0.00
+ptky490@bugle08:~$ ./randomStrings 100 100000 | time -p ~cs1927/bin/task1/sort2 -qn
+Sorting 100000 item(s) with sort2
+real 167.80
+user 167.23
+sys 0.01
+ptky490@bugle08:~$ 
+
+
+//1,000,000
+

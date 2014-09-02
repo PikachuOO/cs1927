@@ -1,0 +1,20 @@
+//peterkydd
+//17/08//13
+//timing.txt
+ 
+
+
+//Times are in seconds
+Number of sequences	Time (first run)	Time (second run)	Time (third run)	Average Time
+9				         0.016             0.020             0.012             0.02
+99                   0.028             0.028             0.032             0.03
+999                  0.920             0.902             0.912             0.91
+9999                 77.34             84.261            83.960            93.10
+99999                6745.26           6390.3            6560.7            6565.42
+
+compiled with:
+-dcc -Wall -Werror -O -o simplenalysis simpleAnalysis.c
+
+After much experimentation, I used a BUBBLE SORT to sort the strings in my program. As such, we can expect a time complexity of approximately N^2. This is reflected in the timing results shown above. (Data increases x10, time increases approx x100)
+
+I initially tried to implement a quick sort type algorithm, but found the program too complex to debug. I will try again, now that i have a working version. (albeit a slow one).

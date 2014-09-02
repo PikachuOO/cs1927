@@ -1,0 +1,658 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
+#include <string.h>
+#include "game.h"
+#include "HunterView.h"
+#include "Graph.h"
+#include "Queue.h"
+#include "cities.h"
+#include "playerData.h"
+
+//#define DEBUG_PRINT_LIST
+
+
+
+//need to find a place to put this
+int getTurn(HunterView currentView);
+
+
+typedef struct _gameStruct {
+    int turnNumber;
+    int whoseTurn;
+    int dracTurnsSoFar;
+    int hunterTeleportOrigin;
+    int roundNumber;
+    int score;
+    
+} gameStruct;
+
+struct hunterView {
+    gameStruct game;
+    Graph euroGraph;
+    dracStruct *drac;
+    hunterStruct *hunter[NUM_HUNTERS];  // -1 because dracula not inc.
+    int hunterTurnCount[NUM_HUNTERS];   //determines the hunters turn vs number of game rounds
+    Queue hunterLocationQueue[NUM_HUNTERS];     //queue of hunter locations. 
+};
+
+// helper function prototypes
+static int isSea (int loc);
+static int isDoubleBack (int loc);
+static int turnsDoubledBack (int loc);
+
+
+HunterView newHunterView( char *pastPlays, playerMessage messages[] ) {
+    HunterView hunterView = malloc( sizeof( struct hunterView ) );
+
+    // initialise for loop variables
+    int hunters, count, encs, rounds;
+
+    // --- populate hunterView ---
+
+    //where PLAY_LENGTH == 8
+    // turn number: (accounting for last space ommitted)
+    assert( (strlen(pastPlays) % PLAY_LENGTH == 0) ||
+            ((strlen(pastPlays)+1) % PLAY_LENGTH == 0 ) );
+    assert(strlen(pastPlays) >= 0);
+    if (strlen(pastPlays) % PLAY_LENGTH == 0) {
+        hunterView->game.turnNumber = (int)(strlen(pastPlays)/PLAY_LENGTH);
+    } else {
+        hunterView->game.turnNumber = (int)((strlen(pastPlays)+1)/PLAY_LENGTH);
+    }
+
+    // round number:
+    hunterView->game.roundNumber = (int)(((hunterView->game.turnNumber)-1) / NUM_PLAYERS); // works by ommiting decimal by using typecast
+    hunterView->game.whoseTurn = hunterView->game.turnNumber % NUM_PLAYERS;
+
+    // dynamically allocate arrays for each hunter
+    // roundNumber directly matches up with array index
+    for (hunters=0; hunters<NUM_HUNTERS; hunters++) {
+        hunterView->hunter[hunters] = malloc( (hunterView->game.roundNumber+1) * sizeof(hunterStruct) );
+    }
+    // dynamically allocate array for Dracula
+    hunterView->drac = malloc( (hunterView->game.roundNumber+1) * sizeof(dracStruct) );
+
+
+    // --- draw euroGraph
+    char locStrings[NUM_LOCATIONS][3] = {
+        "AL", "AM", "AT", "BA", "BI", "BE", "BR", "BO", "BU",
+        "BC", "BD", "CA", "CG", "CD", "CF", "CO", "CN", "DU", "ED",
+        "FL", "FR", "GA", "GW", "GE", "GO", "GR", "HA", "JM", "KL",
+        "LE",
+        "LI", "LS", "LV", "LO", "MA", "MN", "MR", "MI", "MU", "NA",
+        "NP", "NU", "PA", "PL", "PR", "RO", "SA", "SN", "SR", "SJ",
+        "SO", "ST", "SW", "SZ", "TO", "VA", "VR", "VE", "VI", "ZA",
+        "ZU",
+        "NS", "EC", "IS", "AO", "BB", "MS", "TS", "IO", "AS", "BS",
+        "C?", "S?", "HI", "D1", "D2", "D3", "D4", "D5", "TP"
+    };
+
+    hunterView->euroGraph = newGraph();
+
+    // --- initialise variables
+
+    //    char playerStrings[NUM_PLAYERS] = {'G','S','H','M','D'};
+    char encStrings[NUM_ENCS] = {'T', 'V', 'D'};
+
+    // initialise health:
+    for (hunters=0; hunters<NUM_HUNTERS; hunters++) {
+        hunterView->hunter[hunters][0].health = GAME_START_HUNTER_LIFE_POINTS;
+    }
+    hunterView->drac[0].health = GAME_START_BLOOD_POINTS;
+
+    // initialise location to unknown
+    for (hunters=0; hunters<NUM_HUNTERS; hunters++) {
+        hunterView->hunter[hunters][hunterView->game.roundNumber].location = UNKNOWN_LOCATION;
+    }
+    hunterView->drac[0].location = UNKNOWN_LOCATION;
+
+    // initialise counter for mature vampires
+    hunterView->drac[0].numMatureVamps = 0;
+    
+    // initialise drac turn counter
+    hunterView->game.dracTurnsSoFar = -1;
+
+    // initialise hunter turn counter
+    for (hunters=0; hunters<NUM_HUNTERS; hunters++){
+        hunterView->hunterTurnCount[hunters] = 0;
+    }
+    
+    // initialise hunter location queue
+    for (hunters=0; hunters<NUM_HUNTERS; hunters++){
+        hunterView->hunterLocationQueue[hunters] = newQueue();
+    }
+    
+    // initialise dracula location queue;
+        hunterView->drac->dracLocationQueue = newQueue();
+    
+    
+    // iterate through pastPlays
+    for (count=0; count<strlen(pastPlays); count+=PLAY_LENGTH) {
+        int currentPlayer = (count/PLAY_LENGTH) % NUM_PLAYERS;
+        int currentTurn = (count/PLAY_LENGTH);
+        int currentRound = (int)( (currentTurn)/NUM_PLAYERS );
+
+        // location:
+        char tempLocString[3] = {0};
+        if (strlen(pastPlays) >= PLAY_LENGTH) {
+            tempLocString[0] = pastPlays[count+PLAY_LOC_BEGIN];
+            tempLocString[1] = pastPlays[count+PLAY_LOC_BEGIN+1];
+        }
+
+        int locs = 0;
+        while (strcmp(tempLocString, locStrings[locs]) != 0 &&
+               locs < NUM_LOCATIONS) {
+            locs++;
+        }
+
+
+        if (currentPlayer == PLAYER_DRACULA) {
+            // --- dracStruct
+            hunterView->game.dracTurnsSoFar++;
+            
+            // drac's location
+            hunterView->drac[currentRound].location = locs;
+            
+            // update the dracula queue
+            QueueJoin(hunterView->drac->dracLocationQueue, locs);
+            
+            
+            // if dracula teleports
+            if (locs == TELEPORT) {
+                hunterView->drac[currentRound].location = CASTLE_DRACULA;
+            }
+            
+            // if dracula hides
+            
+            
+            // if dracula doubles back
+            
+
+
+            // vampire offspring (only placed in cities)
+            // only start counting after the first is placed
+            if (currentRound >= ROUNDS_TO_PLACE_V) {
+                hunterView->drac[currentRound].numMatureVamps = hunterView->drac[currentRound-1].numMatureVamps;
+
+                // if a vampire offspring was placed
+                if (pastPlays[count-ROUNDS_TO_MATURE] +
+                    D_PLAY_PLACED_ENC == 'V') {
+                    // and if it hasn't been destroyed (ie. encountered)
+                    int isStaked = FALSE;
+                    for (rounds=0; rounds<ROUNDS_TO_MATURE; rounds++) {
+                        for (hunters=0; hunters<NUM_HUNTERS; hunters++) {
+                            for (encs=0; encs<NUM_ENCS; encs++) {
+                                if (hunterView->hunter[hunters][currentRound-rounds].encounters[encs] == 'V') {
+                                    isStaked = TRUE;
+                                }
+                            }
+                        }
+                    }
+                    if (!isStaked) {
+                        hunterView->drac[currentRound].numMatureVamps++;
+                    }
+
+                }
+
+            }
+
+            // health: (blood points)
+            if (currentRound > 0) {
+                hunterView->drac[currentRound].health = hunterView->drac[currentRound-1].health;
+            }
+
+            // if at sea
+            if ( isSea(locs) ) {
+                hunterView->drac[currentRound].health -= LIFE_LOSS_SEA;
+            }
+            
+            // if dracula doubles back into the sea
+            if (isDoubleBack(locs) &&
+                isSea(hunterView->drac[currentRound-turnsDoubledBack(locs)].location)) {
+                hunterView->drac[currentRound].health -= LIFE_LOSS_SEA;
+            }
+
+
+            // if hunter encountered Drac (handled in hunter section)
+            
+//            for (hunters=0; hunters<NUM_HUNTERS; hunters++) {
+//                for (encs=0; encs<NUM_ENCS; encs++) {
+//                    if (hunterView->hunter[hunters][currentRound].encounters[encs] == ENC_DRAC) {
+//                        hunterView->drac[currentRound].health -= LIFE_LOSS_HUNTER_ENCOUNTER;
+//                    }
+//                }
+//            }
+
+            // if drac was at castle drac
+            if (locs == CASTLE_DRACULA) {
+                hunterView->drac[currentRound].health += LIFE_GAIN_CASTLE_DRACULA;
+            }
+
+        } else {
+            // --- hunterStruct
+            
+            //increment the hunter turn counters
+            //ie how many turns has the hunter had?
+            hunterView->hunterTurnCount[currentPlayer]++;
+   
+
+            // more location
+            hunterView->hunter[currentPlayer][currentRound].location = locs;
+            QueueJoin(hunterView->hunterLocationQueue[currentPlayer], locs);
+
+            // encounter:
+            int encCount = H_PLAY_ENC_BEGIN;
+            char currentEncounter = pastPlays[count+encCount];
+            int encsThisTurn = 0;
+            while (currentEncounter!='.' && encCount<=H_PLAY_ENC_END) {
+                // find out which encounter it was
+                int i = 0;
+                while (currentEncounter != encStrings[i] &&
+                       i < NUM_ENCS) {
+                    i++;
+                }
+
+                // ignore expired traps is handled by the game
+
+                // record encounter
+                hunterView->hunter[currentPlayer][currentRound].encounters[encsThisTurn] = i;
+
+#ifdef DEBUG_PRINT_LIST
+                printf("\n---recorded encounter: %d\n", hunterView->hunter[currentPlayer][currentRound].encounters[encsThisTurn]);
+#endif
+                // if the encounter was dracula, subtract from drac's health
+                if (i == ENC_DRAC) {
+                    hunterView->drac[hunterView->game.dracTurnsSoFar].health -= LIFE_LOSS_HUNTER_ENCOUNTER;
+                }
+                
+                encsThisTurn++;
+                encCount++;
+                currentEncounter = pastPlays[count+encCount];
+            }
+
+            // health:
+            if (currentRound > 0) {
+                hunterView->hunter[currentPlayer][currentRound].health =
+                hunterView->hunter[currentPlayer][currentRound-1].health;
+
+                // to account for multiple encounters in the same turn
+                for (encs=0; encs<encsThisTurn; encs++) {
+                    // if hunter encountered drac (encounter must be populated)
+                    if (hunterView->hunter[currentPlayer][currentRound].encounters[encs] == ENC_DRAC) {
+                        hunterView->hunter[currentPlayer][currentRound].health -= LIFE_LOSS_DRACULA_ENCOUNTER;
+
+                    // if hunter encountered trap (encounter must be populated)
+                    } else if (hunterView->hunter[currentPlayer][currentRound].encounters[encs] == ENC_TRAP) {
+                        hunterView->hunter[currentPlayer][currentRound].health -= LIFE_LOSS_TRAP_ENCOUNTER;
+                    }
+                }
+
+                // if hunter rested at a city and it's not the first turn
+                // (even if research was done)
+                if (currentRound > 1 &&
+                    hunterView->hunter[currentPlayer][currentRound].location
+                        == hunterView->hunter[currentPlayer][currentRound-1].location) {
+                    // restore some health
+                    hunterView->hunter[currentPlayer][currentRound].health += LIFE_GAIN_REST;
+
+                    // cap at max health
+                    if (hunterView->hunter[currentPlayer][currentRound].health > GAME_START_HUNTER_LIFE_POINTS) {
+                        hunterView->hunter[currentPlayer][currentRound].health = GAME_START_HUNTER_LIFE_POINTS;
+                    }
+                }
+
+                // if hunter health was <= 0
+                if (hunterView->hunter[currentPlayer][currentRound].health <= 0) {
+                    // restore health
+                    hunterView->hunter[currentPlayer][currentRound].health = GAME_START_HUNTER_LIFE_POINTS;
+                    
+                    // store location in origin buffer
+                    hunterView->game.hunterTeleportOrigin = locs;
+                    
+                    // teleport to hospital
+                    hunterView->hunter[currentPlayer][currentRound].location = ST_JOSEPH_AND_ST_MARYS;
+                    
+                } else {
+                    // set buffer to unknown
+                    hunterView->game.hunterTeleportOrigin = UNKNOWN_LOCATION;
+                }
+
+            }
+
+        }
+
+    }
+
+
+    // --- gameStruct:
+
+    // score calculation:
+    hunterView->game.score = GAME_START_SCORE;
+    hunterView->game.score -= SCORE_LOSS_DRACULA_TURN * hunterView->game.turnNumber/NUM_PLAYERS;
+    // deduct points from score if hunter was teleported to hospital
+    for (hunters = 0; hunters < NUM_HUNTERS; hunters++) {
+        // if hunter health went to zero
+        //hunterView->game.score -= SCORE_LOSS_HUNTER_HOSPITAL;
+    } // hunterStruct must first be populated
+    hunterView->game.score -= SCORE_LOSS_VAMPIRE_MATURES * hunterView->drac[hunterView->game.roundNumber].numMatureVamps;
+
+    return hunterView;
+}
+
+// this function frees all memory previously allocated for the HunterView
+// toBeDeleted. toBeDeleted should not be accessed after the call.
+void disposeHunterView( HunterView toBeDeleted ) {
+    assert( toBeDeleted != NULL);
+
+    int huntFreeCount;
+
+    // less than NUM_PLAYERS to exclude drac - we will free him seperately:)
+    for(huntFreeCount = 0; huntFreeCount < NUM_HUNTERS; huntFreeCount++ ){
+        free(toBeDeleted->hunter[huntFreeCount]);
+    }
+
+    // free drac struct
+    free(toBeDeleted-> drac);
+
+    // final free - remove remaining hunterview struct
+    free(toBeDeleted);
+}
+
+
+Round getRound (HunterView currentView) {
+    int roundNumber = (currentView->game.turnNumber / NUM_PLAYERS);
+
+    #ifdef DEBUG_PRINT_LIST
+       printf("roundNumber is %d\n", roundNumber);
+    #endif
+
+    return roundNumber;
+}
+
+int getTurn (HunterView currentView) {
+   int turnNumber = currentView->game.turnNumber;
+
+   #ifdef DEBUG_PRINT_LIST
+       printf("TurnNumber is %d\n", turnNumber);
+    #endif   
+
+   return turnNumber;
+}
+
+
+PlayerID getCurrentPlayer (HunterView currentView) {
+    int playerNum = currentView->game.whoseTurn; //((currentView->game.turnNumber) % 5);
+
+    #ifdef DEBUG_PRINT_LIST
+       printf("\nPlayerNumber is %d\n", playerNum);
+    #endif
+
+    return playerNum;
+}
+
+int getScore(HunterView currentView) {
+    int score = currentView->game.score;
+
+    #ifdef DEBUG_PRINT_LIST
+       printf("Score is %d\n", score);
+    #endif
+
+    return score;
+}
+
+int getHealth(HunterView currentView, PlayerID player) {
+    int playerHealth;
+    
+    if (player == PLAYER_DRACULA) {
+        if (currentView->game.dracTurnsSoFar == -1) {
+            playerHealth = currentView->drac[0].health;
+        } else {
+            playerHealth = currentView->drac[currentView->game.dracTurnsSoFar].health;
+        }
+        
+    } else {
+        playerHealth = currentView->hunter[player][currentView->game.roundNumber].health;
+    }
+
+    #ifdef DEBUG_PRINT_LIST
+       printf("Health for player %d is %d\n",player ,playerHealth);
+    #endif
+
+    return playerHealth;
+}
+
+
+
+
+
+
+LocationID getLocation(HunterView currentView, PlayerID player){
+    int playerLocation;
+    
+    if(player == PLAYER_DRACULA){
+        if (currentView->game.dracTurnsSoFar == -1) {
+            playerLocation = currentView->drac[0].location;
+        } else {
+            playerLocation = currentView->drac[currentView->game.dracTurnsSoFar].location;
+        }
+        
+    } else {
+        playerLocation = currentView->hunter[player][currentView->game.roundNumber].location;
+    }
+    
+    
+   #ifdef DEBUG_PRINT_LIST
+       printf("Location of player %d is %d\n",player, playerLocation);
+   #endif
+    
+    return playerLocation;
+}
+
+
+void getHistory (HunterView currentView, PlayerID player, LocationID trail[TRAIL_SIZE]) {
+    assert(currentView != NULL);
+    int trailCount = 0;
+
+    //initialise array as UNKNOWN_LOCATION
+    while(trailCount < TRAIL_SIZE){
+        trail[trailCount] = UNKNOWN_LOCATION;
+        trailCount++;
+    }
+  
+   if(player == PLAYER_DRACULA){
+      populateArray(currentView->drac->dracLocationQueue, trail);
+   
+   }else{
+      populateArray(currentView->hunterLocationQueue[player], trail);
+   }
+   
+   #ifdef DEBUG_PRINT_LIST
+      trailCount = 0;
+      while(trailCount < TRAIL_SIZE){
+          printf("trail[%d] = %d\n", trailCount, trail[trailCount]);
+          trailCount++;
+      }
+   #endif
+}   
+   
+LocationID * connectedLocations(HunterView currentView, int * numLocations, LocationID from, PlayerID player, Round round, int road, int rail, int sea) {
+    assert(currentView != NULL);
+    
+    //initialise counters for type specific arrays, ie, array of roads - these will be combined for numLocs and array size
+    int numRoad = 0;
+    int numRail = 0;
+    int numSea = 0;
+    
+    //find the potential distance by train - sum of player and round numbers, modded by 4
+    int trainVal = (( player + round) %4);
+    int notTrain = 1;
+    
+    //initialise current pointer to first node in adjacency list
+    locList current = currentView->euroGraph->connections[from];
+    
+    //find total number of valid locations
+    if(road == TRUE){
+        while(current!= NULL){
+            if(current->type == LAND){
+                numRoad++;
+            }
+            current = current->next;
+        }
+       current = currentView->euroGraph->connections[from];
+    }
+    
+    #ifdef DEBUG_PRINT_LIST
+       printf("numRoad = %d\n", numRoad);
+    #endif
+
+
+    if(sea == TRUE){
+        while(current!= NULL){
+            if(current->type == SEA){
+                numSea++;
+            }
+            current = current->next;
+        }
+       current = currentView->euroGraph->connections[from];
+    }
+    #ifdef DEBUG_PRINT_LIST
+        printf("numSea = %d\n", numSea);
+    #endif
+    
+    if(rail == TRUE){
+        
+        //LocationID *railLocations = malloc(NUM_MAP_LOCATIONS * (sizeof(LocationID)));
+
+        LocationID railLocations[NUM_MAP_LOCATIONS] = {0};
+
+        while(numRail < NUM_MAP_LOCATIONS){
+            railLocations[numRail] = 0;
+            numRail++;
+        }
+        numRail = 0;
+        /*
+
+              #ifdef DEBUG_PRINT_LIST 
+                printf("railLocations[%d] = %d\n", railCount, railLocations[railCount]);
+              #endif
+        */
+        
+
+        canReachInN( currentView->euroGraph ,from , RAIL, trainVal, railLocations);
+
+        int railCount = 0;
+
+            while(railCount < NUM_MAP_LOCATIONS){
+             
+                if(railLocations[railCount] == 1){
+                   numRail++;
+
+                }
+
+              railCount++;
+              
+           }
+        numRail--;
+
+        #ifdef DEBUG_PRINT_LIST 
+            printf("numRail = %d\n", numRail);
+        #endif
+    }
+    
+    
+    #ifdef DEBUG_PRINT_LIST
+        printf("numSea = %d", numSea);
+    #endif
+    
+    //report total number of valid locations
+    *numLocations = (numRoad + numSea + numRail + 1);
+    
+    //create locations array to return
+    //numLocations + 1 for the current location, ie, 'from'
+    
+    LocationID *tempLocations = malloc( (NUM_MAP_LOCATIONS) * (sizeof(LocationID)));
+    
+    //populate connected locations array
+    
+    if(road == TRUE){
+        canReachInN( currentView->euroGraph ,from , LAND, notTrain, tempLocations);
+    }
+    
+    if(rail == TRUE){
+        canReachInN( currentView->euroGraph ,from , RAIL, trainVal, tempLocations);
+    }
+
+    if(sea == TRUE){
+        canReachInN( currentView->euroGraph ,from , SEA, notTrain, tempLocations);
+    }
+    
+    
+    
+    
+    #ifdef DEBUG_PRINT_LIST
+        int printCount = 0; ;
+        while(printCount < NUM_MAP_LOCATIONS){
+            printf("connectedLocations[%d] = %d\n",printCount,  tempLocations[printCount] );
+            printCount++;
+        }
+        
+        printf("numLocations = %d\n", *numLocations);
+    #endif
+    
+    //connectedLocations[from] = 1;
+    
+    LocationID *connectedLocations = malloc( (*numLocations+1) * (sizeof(LocationID)));
+    int transferCount = 0;
+    int connectedCount = 0;
+    
+    while(transferCount<NUM_MAP_LOCATIONS){
+        if(tempLocations[transferCount] == 1){
+            connectedLocations[connectedCount] = transferCount;
+            connectedCount++;
+        }
+        transferCount++;
+    }
+    
+    
+    #ifdef DEBUG_PRINT_LIST
+        printCount = 0; ;
+        while(printCount <= *numLocations){
+            printf("connectedLocations[%d] = %d\n",printCount,  connectedLocations[printCount] );
+            printCount++;
+        }
+        printf("NUMLOCATIONS IS %d\n", *numLocations);
+    #endif
+        
+    return connectedLocations;
+}
+
+
+static int isSea (int loc) {
+    int verdict = FALSE;
+    if (loc == SEA_UNKNOWN || (loc >= NORTH_SEA && loc <= BLACK_SEA)) {
+        verdict = TRUE;
+    }
+    
+    return verdict;
+}
+
+static int isDoubleBack (int loc) {
+    int verdict = FALSE;
+    if (loc >= DOUBLE_BACK_1 && loc <= DOUBLE_BACK_5) {
+        verdict = TRUE;
+    }
+    
+    return verdict;
+}
+
+static int turnsDoubledBack (int loc) {
+    assert( isDoubleBack(loc) );
+    
+    // if DOUBLE_BACK_1 is current location
+//    return loc-DOUBLE_BACK_1;
+    
+    // if DOUBLE_BACK_1 is location 1 round ago
+    return loc-DOUBLE_BACK_1 +1;
+}
+

@@ -1,0 +1,76 @@
+
+  
+      
+      
+      
+      //MINIMUM CONSECUTIVE NUMBERS
+      //create 2D array for min consec strings to be copied into 
+      char **seqMinConsec = malloc(newLineCount*(sizeof(char*)));
+      
+      letterCount = 0;
+      
+      while( letterCount < newLineCount ){
+         seqMinConsec[letterCount] = malloc((STRING_LENGTH+3)*(sizeof(char)));
+         //set the memory to null bytes
+         memset( seqMinConsec[letterCount], 0, (STRING_LENGTH+3)*(sizeof(char)));
+         //printf("%s", seqMinConsec[letterCount]);
+         letterCount++;
+      }
+      
+      
+      
+      //MAXIMUM CONSECUTIVE NUMBERS
+      //create 2D array for max consec strings to be copied into 
+      char **seqMaxConsec = malloc(newLineCount*(sizeof(char*)));
+      
+      letterCount = 0;
+      
+      while( letterCount < newLineCount ){
+         seqMaxConsec[letterCount] = malloc((STRING_LENGTH+3)*(sizeof(char)));
+         //set the memory to null bytes
+         memset( seqArray[letterCount], 0, (STRING_LENGTH+3)*(sizeof(char)));
+         //printf("%s", seqArray[letterCount]);
+         letterCount++;
+      }
+   
+   
+   
+   
+      
+      
+     
+   
+
+
+
+
+
+
+
+
+
+
+
+/*
+int strncmpMK1(char *string1, char *string2, int charMax){
+   int compareVal = 0;
+   int exit = 0;
+   int charCount = 0;
+   int iterations = 0;
+   
+   while((iterations<charMax) && (exit == 0)){
+      if(string1[charCount] < string2[charCount]){
+         compareVal = -1;
+         exit = 1;
+      }else if(string1[charCount] > string2[charCount]){
+         compareVal = 1;
+         exit = 1;
+      }else{
+         iterations++;
+         charCount++;
+      }
+   }   
+   
+   return compareVal;
+}
+*/

@@ -1,0 +1,154 @@
+//peterKydd
+//task1
+// SORT3
+
+//RANDOM
+/*
+ ./randomStrings a b
+where:
+a = number of characters
+b = number of strings
+*/ 
+
+//EXTREMELY SLOW SORT
+
+// 5 charx 5 strings
+
+Sorting 5 item(s) with sort3
+real 0.01
+user 0.00
+sys 0.00
+ptky490@bugle08:~$ ./randomStrings 5 5 | time -p ~cs1927/bin/task1/sort3 -qn
+Sorting 5 item(s) with sort3
+real 0.00
+user 0.00
+sys 0.00
+ptky490@bugle08:~$ ./randomStrings 5 5 | time -p ~cs1927/bin/task1/sort3 -qn
+Sorting 5 item(s) with sort3
+real 0.00
+user 0.00
+sys 0.00
+ptky490@bugle08:~$ 
+
+// 5 charx 6 strings
+
+ptky490@bugle08:~$ ./randomStrings 5 6 | time -p ~cs1927/bin/task1/sort3 -qn
+Sorting 6 item(s) with sort3
+real 0.01
+user 0.00
+sys 0.00
+ptky490@bugle08:~$ ./randomStrings 5 6 | time -p ~cs1927/bin/task1/sort3 -qn
+Sorting 6 item(s) with sort3
+real 0.00
+user 0.00
+sys 0.00
+ptky490@bugle08:~$ ./randomStrings 5 6 | time -p ~cs1927/bin/task1/sort3 -qn
+Sorting 6 item(s) with sort3
+real 0.00
+user 0.00
+sys 0.00
+ptky490@bugle08:~$ 
+
+
+// 5 charx 7 strings
+
+ptky490@bugle08:~$ ./randomStrings 5 7 | time -p ~cs1927/bin/task1/sort3 -qn
+Sorting 7 item(s) with sort3
+real 0.09
+user 0.09
+sys 0.00
+ptky490@bugle08:~$ ./randomStrings 5 7 | time -p ~cs1927/bin/task1/sort3 -qn
+Sorting 7 item(s) with sort3
+real 0.02
+user 0.02
+sys 0.00
+ptky490@bugle08:~$ ./randomStrings 5 7 | time -p ~cs1927/bin/task1/sort3 -qn
+Sorting 7 item(s) with sort3
+real 0.02
+user 0.02
+sys 0.00
+ptky490@bugle08:~$ 
+
+
+
+// 5 char x 8 strings
+
+ptky490@bugle08:~$ ./randomStrings 5 8 | time -p ~cs1927/bin/task1/sort3 -qn
+Sorting 8 item(s) with sort3
+real 0.56
+user 0.55
+sys 0.00
+
+/*next two sorts were run in the same second - beacuse of the implementation of the string generator, this means that the same set of string data was fed into the sort in that second. 
+
+the time results were identical
+*/
+
+ptky490@bugle08:~$ ./randomStrings 5 8 | time -p ~cs1927/bin/task1/sort3 -qn
+Sorting 8 item(s) with sort3
+real 0.13
+user 0.13
+sys 0.00
+ptky490@bugle08:~$ ./randomStrings 5 8 | time -p ~cs1927/bin/task1/sort3 -qn
+Sorting 8 item(s) with sort3
+real 0.13
+user 0.13
+sys 0.00
+
+//the sorts above were run as per the explanation above
+
+
+ptky490@bugle08:~$ ./randomStrings 5 8 | time -p ~cs1927/bin/task1/sort3 -qn
+Sorting 8 item(s) with sort3
+real 1.28
+user 1.28
+sys 0.00
+ptky490@bugle08:~$ 
+
+
+
+// 5 char x 9 strings
+
+ptky490@bugle08:~$ ./randomStrings 5 9 | time -p ~cs1927/bin/task1/sort3 -qn
+Sorting 9 item(s) with sort3
+real 11.80
+user 11.63
+sys 0.02
+ptky490@bugle08:~$ ./randomStrings 5 9 | time -p ~cs1927/bin/task1/sort3 -qn
+Sorting 9 item(s) with sort3
+real 0.35
+user 0.34
+sys 0.00
+ptky490@bugle08:~$ ./randomStrings 5 9 | time -p ~cs1927/bin/task1/sort3 -qn
+Sorting 9 item(s) with sort3
+real 9.87
+user 9.85
+sys 0.00
+ptky490@bugle08:~$ 
+
+
+// 5 char x 10 strings
+
+ptky490@bugle08:~$ ./randomStrings 5 10 | time -p ~cs1927/bin/task1/sort3 -qn
+Sorting 10 item(s) with sort3
+real 16.49
+user 16.45
+sys 0.00
+ptky490@bugle08:~$ ./randomStrings 5 10 | time -p ~cs1927/bin/task1/sort3 -qn\
+> 
+Sorting 10 item(s) with sort3
+real 107.21
+user 106.96
+sys 0.00
+ptky490@bugle08:~$ ./randomStrings 5 10 | time -p ~cs1927/bin/task1/sort3 -qn
+Sorting 10 item(s) with sort3
+real 6.75
+user 6.70
+sys 0.03
+ptky490@bugle08:~$ 
+
+
+// 5 char x 11 strings
+
+// 5 char x 12 strings
+

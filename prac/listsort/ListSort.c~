@@ -1,0 +1,67 @@
+// peterKydd
+// 07/0703
+// interface functions for link lists sorting program 
+
+
+#include "ListSort.h"
+
+typedef struct _node *nodePointer;
+
+typedef struct _node {
+   int data;
+   nodePointer next;
+   nodePointer previous;
+} node;
+
+typedef struct _list {
+   nodePointer first;
+   nodePointer last;
+} list;
+
+List createList (void) {
+   List new = malloc (sizeof (struct _list));
+   new->first = NULL;
+   new->last = NULL;
+   return new;
+}
+
+void prependNode(List newList, int value){
+   //assert(newList->first != NULL);
+   
+   nodePointer newNode = malloc(sizeof(struct _node));
+
+   newNode->data = value;
+   newNode->next = newList->first;
+   
+   newList->first = newNode;
+   //newList->last = newNode;
+}
+
+
+void printList(List newList){
+   
+   nodePointer current = newList->first;
+   
+   printf("[LIST_FIRST]>");
+   
+   while(current != NULL){
+      printf("[%d]>", current->data);
+      current = current->next;
+   }
+   printf("[X]\n");
+}
+
+
+void printListReverse(List newList){
+   nodePointer current = newList->last;
+   
+   printf("[LIST_FIRST]>");
+   
+   while(current != NULL){
+      printf("[%d]>", current->data);
+      current = current->previous;
+   }
+   printf("[X]\n");
+}
+
+

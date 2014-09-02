@@ -1,0 +1,39 @@
+LAB 1 TIMINGS RECORD
+
+
+
+//TIME IN SECONDS 	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+_uil		   _time          _sort    _time         
+
+100	      0.008	         100	   0.008
+500         0.008          500      0.008
+1000	      0.008	         1000	   0.008
+5000        0.048          5000     0.008
+10000	      0.184	         10000	   0.012
+50000       5.052          50000    0.012
+100000	   21.837	      100000	0.116
+500000      1538.35        500000   0.680
+1000000	   2010.601**     1000000	1.428
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   
+10000000		               10000000	        
+
+100000000		            100,000,000	5+ minutes **
+
+1000000000		            1000000000	
+
+
+*nb Time in seconds
+**(user terminated)
+
+
+At 1,000,000 (million) numbers 'uil' sort took ~35min (even with user termination!!!).
+
+In any case, even at 100,000 values, 'sort' average was vastly more efficient, with an average time that was 188.25 times faster than the average 'uil' sort for that number of values.
+
+The host machine is quite old and slow, and is running LINUX on a Virtual Machine, so this may account for the long sort times. however, the relative speed of the sorts is clear. Using excel to plot the data in a graph, the 'uil' sort took on an exponential curve.
+
+
+//sort MAX @ 100,000,000 (time taken 5+ minutes, user terminated)
+
+

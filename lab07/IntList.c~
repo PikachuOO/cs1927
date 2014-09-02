@@ -1,0 +1,274 @@
+// IntList.c - Lists of integers
+// Written by John Shepherd, July 2008
+// Modified by Angela Finlayson, November, 2008
+
+#include <stdlib.h>
+#include <stdio.h>
+#include "assert.h"
+#include "IntList.h"
+
+#define EMPTY_LIST 0
+
+
+// data structures representing IntList
+
+struct intListNode {
+    int  data;      // value of this list item
+    struct intListNode * next;
+	            // pointer to node containing next element
+};
+
+struct intListImp {
+    int  size;      // number of elements in list
+    struct intListNode *  first; 
+                    // node containing first value
+    struct intListNode *  last;  
+                    // node containing last value
+};
+
+
+// data structure representing DIntList
+
+struct dIntListNode {
+    int data;
+    struct dIntListNode * next;
+    struct dIntListNode * prev; //pointer to node containing previous element
+};
+
+struct dIntListImp{
+    int size;
+    struct dIntListNode * first;
+    struct dIntListNode * last;
+};
+
+static void dNewNode(DIntList dList, int data);
+
+// create a new empty IntList
+IntList newIntList(void){
+    struct intListImp *list;
+
+    list = malloc(sizeof (struct intListImp));
+    assert (list != NULL);
+    list->size = 0;
+    list->first = NULL;
+    list->last = NULL;
+    return list;
+}
+
+// free up all space associated with list
+void freeIntList(IntList list){
+    struct intListNode *curr,*next;
+    assert(list != NULL);
+
+    curr = list->first;
+    while(curr!=NULL){
+        next = curr->next;
+        free(curr);
+        curr = next;
+    }
+    free(list);
+}
+
+// create a new IntListNode with value v
+// (this function is local to this ADT)
+static struct intListNode *newIntListNode(int v){
+    struct intListNode *n;
+
+    n = malloc(sizeof (struct intListNode));
+    assert(n != NULL);
+    n->data = v;
+    n->next = NULL;
+    return n;
+}
+
+// create an IntList by reading values from a file
+// assume that the file is open for reading
+IntList fScanIntList(FILE *inf){
+    IntList list;
+    int v;
+
+    list = newIntList();
+    while (fscanf(inf,"%d",&v) != EOF){
+	insertIntList(list,v);
+    }
+    return list;
+}
+
+// apppend one integer to the end of a list
+void insertIntList(IntList list, int v){
+    struct intListNode *n;
+
+    assert(list != NULL);
+    n = newIntListNode(v);
+    if (list->first == NULL){
+     	list->first = n;
+        list->last = n;
+    }else {
+       	list->last->next = n;
+       	list->last = n;
+    }
+    list->size++;
+}
+
+// return number of elements in a list
+int lengthIntList(IntList list){
+    assert(list != NULL);
+    return list->size;
+}
+
+// display list as one integer per line
+void printIntList(IntList list){
+    struct intListNode *curr;
+
+    assert(list != NULL);
+    for (curr = list->first; curr != NULL; curr = curr->next){
+        printf("%d ", curr->data);
+    }
+    printf("\n");
+}
+
+// check sanity of an IntList (for debugging)
+int checkIntList(IntList list){
+    struct intListNode *p;
+    int count;
+
+    if (list == NULL)
+	return 1;
+    if (list->size == 0){
+       	return (list->first == NULL && list->last == NULL);
+    }
+    // scan to (but not past) last node
+    count = 1; // at least one node
+    for (p = list->first; p->next != NULL; p = p->next){
+	count++;
+    }
+    return (count == list->size && p == list->last);
+}
+
+int lengthDIntList(DIntList dList){
+    assert(dList != NULL);
+    return dList->size;
+}
+// prints a doubly linked list with each piece of data on a new line
+void printDIntList(DIntList dList){
+    struct dIntListNode *curr;
+
+    assert(dList != NULL);
+    for (curr = dList->first; curr != NULL; curr = curr->next){
+        printf("%d ", curr->data);
+    }
+    printf("\n");
+}
+
+// check sanity of an IntList (for debugging)
+int checkDIntList(DIntList list){
+    struct dIntListNode *p;
+    struct dIntListNode *prev= NULL;
+    int count;
+
+    if (list == NULL)
+        return 1;
+    if (list->size == 0){
+        return (list->first == NULL && list->last == NULL);
+    }
+    // scan to (but not past) last node
+    count = 1; // at least one node
+    for (p = list->first, prev = NULL ; p->next != NULL; prev = p, p = p->next){
+        if(p->prev != prev) return 0;
+        count++;
+    }
+    return (count == list->size && p == list->last);
+}
+
+
+// prints a doubly linked list in reverse with each piece of data
+// on a new line
+void printRevDIntList(DIntList dList){
+    struct dIntListNode *curr;
+
+    assert(dList != NULL);
+    for (curr = dList->last; curr != NULL; curr = curr->prev){
+        printf("%d ", curr->data);
+    }
+    printf("\n");
+}
+
+// frees the memory used in a double linked list
+void freeDIntList(DIntList dList){
+    struct dIntListNode *curr,*next;
+    assert(dList != NULL);
+    curr = dList->first;
+    while(curr!=NULL){
+        next = curr->next;
+        free(curr);
+        curr = next;
+    }
+    free(dList);
+}
+
+// converts a list into a doubly linked list
+DIntList doublify(IntList list){
+   
+   //create double linked list dList;
+   DIntList dList; 
+   dList = malloc(sizeof(struct dIntListImp));
+   
+   if( list->size == 1){
+      
+   
+   
+   }else if(list->size > 1){
+      struct intListNode *current;
+      //struct intListNode *previous; 
+      
+      current = list->first;
+      //previous = current;
+      
+      while(current->next != NULL){
+         dNewNode(dList, current->data);
+         current = current->next;
+         
+      }
+      dNewNode(dList, current->data);
+   }
+   
+   return dList;
+}
+ 
+static void dNewNode(DIntList dList, int data){
+ 
+   struct dIntListNode *newNode;
+   newNode = malloc(sizeof(struct dIntListNode));
+   newNode->next = NULL;
+   newNode->prev = NULL;
+   newNode->data = data;
+   
+   struct dIntListNode  *current = NULL;
+   //struct dIntListNode  *previous = NULL;
+   
+   //deal with empty list
+   if(dList->size == EMPTY_LIST){
+      dList->first = newNode;
+      dList->last = newNode;
+   
+   //list size is 1
+   }else if(dList->size == 1){
+      current = dList->first;
+      current->next = newNode;
+      newNode->prev = current;
+   //all other cases
+   }else{   
+      current = dList->first;
+      while(current->next != NULL){
+         //previous = current;
+         current = current->next;
+      } 
+      current->next = newNode;
+      newNode->prev = current;
+      
+   }  
+   dList->last = newNode;
+   dList->size++;
+
+}
+

@@ -1,0 +1,110 @@
+
+FILE     STRATEGY       HEIGHT   TIME(with search)  TIME(without search)      
+
+dict0           
+                0          12            0m0.004s              0m0.004s
+                1           3            0m0.004s              0m0.004s
+                2          12            0m0.004s              0m0.004s
+                3          12            0m0.004s              0m0.004s
+                4           5            0m0.004s              0m0.004s
+                5          12            0m0.000s              0m0.004s
+                
+                6a          3            0m0.000s              0m0.004s                        
+                6b          3            0m0.000s              0m0.004s
+                6c         12            0m0.000s              0m0.000s
+
+dict1
+                0        1776            0m0.048s              0m0.032s
+                1          10            0m0.036s              0m0.048s
+                2          86            0m0.008s              0m0.008s
+                3         785            0m0.024s              0m0.020s
+                4          23            0m0.008s              0m0.008s
+                5        1776            0m0.016s              0m0.004s
+                
+                6a         10            0m0.012s              0m0.024s                       
+                6b         10            0m0.020s              0m0.008s
+                6c         18            0m0.012s              0m0.020s
+dict2
+                0       21315            0m0.668s              0m0.340s             
+                1          12            0m0.452s              0m0.448s
+                2         117            0m0.036s              0m0.044s
+                3          29            0m0.072s              0m0.060s
+                4          26            0m0.016s              0m0.016s
+                5        7105            0m0.156s              0m0.004s
+                
+                6a         13            0m0.224s              0m0.220s                        
+                6b         13            0m0.180s              0m0.184s
+                6c         45            0m0.156s              0m0.152s
+
+
+dict3
+                0       21315            0m6.020s              0m3.004s
+                1          14            0m4.012s              0m3.928s
+                2          29            0m0.148s              0m0.152s
+                3         329            0m0.216s              0m0.228s
+                4          30            0m0.032s              0m0.048s
+                5       21315            0m0.200s              0m0.008s
+                
+                6a         16            0m1.992s             0m17.869s                                               
+                6b         17            0m1.564s              0m1.488s
+                6c         61            0m1.404s              0m1.384s
+
+dict4
+                0       63945           0m54.927s             0m27.406s              
+                1          15           0m35.326s             0m34.898s
+                2          60            0m0.648s              0m0.652s
+                3         960            0m0.640s              0m0.572s
+                4          36            0m0.076s              0m0.068s
+                5       63945            0m1.840s              0m0.020s
+               
+                6a         16           0m19.917s                                              
+                6b         24           0m16.077s             0m14.489s
+                6c         52           0m14.469s             0m14.605s
+
+dict5
+                0          12           2m12.676s              1m5.032s
+                1        1776           1m24.233s             1m21.129s
+                2        7105            0m1.416s              0m1.316s
+                3       21315            0m1.000s              0m0.908s
+                4       63945            0m0.108s              0m0.072s
+                5       98324           0m17.469s              0m0.028s  
+
+                6a         16            1m7.668s             0m54.123s                       
+                6b         24           0m54.247s             0m45.519s
+                6c         60           0m48.435s             0m51.087s
+
+*Note time values for random balancing are average of 3
+
+6a = IMBAL_REFERENCE 2
+6b = IMBAL_REFERENCE 10
+6c = IMBAL_REFERENCE 50
+
+
+
+
+My personal rebalancing strategy:
+
+Rebalance the tree when the height of the left and right subtrees differ by more than some number, defined as IMBAL_REFERENCE. this value will be changed and a number of values tested for optimal performance. 
+
+IMBAL_REFERENCE a) = 2;
+                b) = 10;
+                c) = 50;
+                
+
+SPLAY SEARCHING:
+
+FILE     STRATEGY       HEIGHT   TIME(with search)  TIME(without search)  
+
+dict0
+dict1
+dict2
+dict3
+dict4
+dict5
+
+
+   
+
+
+
+

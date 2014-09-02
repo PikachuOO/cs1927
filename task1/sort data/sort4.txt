@@ -1,0 +1,97 @@
+//peterKydd
+//task1
+// SORT4
+
+//RANDOM
+/*
+ ./randomStrings a b
+where:
+a = number of characters
+b = number of strings
+*/ 
+
+//1000
+
+ptky490@pipe12:~/cs1927/task1$ ./randomStrings 100 1000 | time -p ~cs1927/bin/task1/sort4 -qn
+Sorting 1000 item(s) with sort4
+real 0.04
+user 0.04
+sys 0.00
+ptky490@pipe12:~/cs1927/task1$ ./randomStrings 100 1000 | time -p ~cs1927/bin/task1/sort4 -qn
+Sorting 1000 item(s) with sort4
+real 0.04
+user 0.03
+sys 0.00
+ptky490@pipe12:~/cs1927/task1$ ./randomStrings 100 1000 | time -p ~cs1927/bin/task1/sort4 -qn
+Sorting 1000 item(s) with sort4
+real 0.04
+user 0.04
+sys 0.00
+ptky490@pipe12:~/cs1927/task1$ 
+
+
+
+//10,000
+
+ptky490@pipe12:~/cs1927/task1$ ./randomStrings 100 10000 | time -p ~cs1927/bin/task1/sort4 -qn
+Sorting 10000 item(s) with sort4
+real 0.51
+user 0.44
+sys 0.00
+ptky490@pipe12:~/cs1927/task1$ ./randomStrings 100 10000 | time -p ~cs1927/bin/task1/sort4 -qn
+Sorting 10000 item(s) with sort4
+real 0.47
+user 0.45
+sys 0.00
+ptky490@pipe12:~/cs1927/task1$ ./randomStrings 100 10000 | time -p ~cs1927/bin/task1/sort4 -qn
+Sorting 10000 item(s) with sort4
+real 0.64
+user 0.44
+sys 0.00
+ptky490@pipe12:~/cs1927/task1$ 
+
+
+
+//100,000
+
+ptky490@pipe12:~/cs1927/task1$ ./randomStrings 100 100000 | time -p ~cs1927/bin/task1/sort4 -qn
+Sorting 100000 item(s) with sort4
+real 10.76
+user 10.58
+sys 0.02
+ptky490@pipe12:~/cs1927/task1$ ./randomStrings 100 100000 | time -p ~cs1927/bin/task1/sort4 -qn
+Sorting 100000 item(s) with sort4
+real 10.78
+user 10.61
+sys 0.00
+ptky490@pipe12:~/cs1927/task1$ ./randomStrings 100 100000 | time -p ~cs1927/bin/task1/sort4 -qn
+Sorting 100000 item(s) with sort4
+real 10.78
+user 10.59
+sys 0.01
+ptky490@pipe12:~/cs1927/task1$ 
+
+
+
+//1,000,000
+
+ptky490@pipe12:~/cs1927/task1$ ./randomStrings 100 1000000 | time -p ~cs1927/bin/task1/sort4 -qn
+Sorting 1000000 item(s) with sort4
+real 371.22
+user 368.96
+sys 0.04
+ptky490@pipe12:~/cs1927/task1$ ./randomStrings 100 1000000 | time -p ~cs1927/bin/task1/sort4 -qn
+Sorting 1000000 item(s) with sort4
+real 372.61
+user 370.20
+sys 0.06
+ptky490@pipe12:~/cs1927/task1$ 
+ptky490@pipe12:~/cs1927/task1$ ./randomStrings 100 1000000 | time -p ~cs1927/bin/task1/sort4 -qn
+Sorting 1000000 item(s) with sort4
+real 369.59
+user 367.33
+sys 0.04
+ptky490@pipe12:~/cs1927/task1$ 
+
+
+

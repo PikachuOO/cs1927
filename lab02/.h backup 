@@ -1,0 +1,17 @@
+/*need:
+*linear
+*insertion (DONE)
+*selection
+*shell 
+*/
+
+//linear search 
+void linearSort(IntList, int);
+
+//selection sort
+void selectionSort(IntList, int);
+
+//shell sort
+void shellSort(IntList, int);
+
+
